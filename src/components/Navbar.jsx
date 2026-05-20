@@ -3,11 +3,41 @@ import { Sun, Moon, Lightbulb, Menu, X } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { authClient } from "@/lib/auth-client";
+import { Avatar, Spinner } from "@heroui/react";
+import { useRouter } from "next/navigation";
+import toast, { Toaster } from "react-hot-toast";
+import { LogOut } from "lucide-react";
 
 export default function AppNavbar() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+
+  const router = useRouter();
+  const [logoutLoading, setLogoutLoading] = useState(false);
+  const { data: session, isPending: isSessionLoading } =
+    authClient.useSession();
+
+  const handleLogout = async () => {
+    setLogoutLoading(true);
+    try {
+      await authClient.signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            toast.success("Logged out successfully!");
+            setIsOpen(false);
+            router.push("/login");
+            router.refresh();
+          },
+        },
+      });
+    } catch (err) {
+      toast.error("Logout failed.");
+    } finally {
+      setLogoutLoading(false);
+    }
+  };
 
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;
@@ -68,19 +98,43 @@ export default function AppNavbar() {
             )}
           </button>
 
-          <Link
-            href="/login"
-            className="hidden sm:inline-block text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-blue-600 transition-colors"
-          >
-            Login
-          </Link>
-
-          <Link
-            href="/register"
-            className="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold rounded-full shadow-md transition-all"
-          >
-            Sign Up
-          </Link>
+          {isSessionLoading ? (
+            <Spinner size="sm" color="blue" />
+          ) : session ? (
+            <div className="flex items-center gap-3">
+              <Avatar
+                src={session.user?.image || ""}
+                name={session.user?.name || "U"}
+                size="sm"
+                radius="full"
+                isBordered
+                color="blue"
+              />
+              <button
+                onClick={handleLogout}
+                disabled={logoutLoading}
+                className="hidden sm:flex bg-red-500 hover:bg-red-600 text-white font-semibold text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2 rounded-full shadow-md transition-all items-center gap-1 cursor-pointer"
+              >
+                <LogOut size={14} />
+                {logoutLoading ? "..." : "Log Out"}
+              </button>
+            </div>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="hidden sm:inline-block text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-blue-600 transition-colors"
+              >
+                Login
+              </Link>
+              <Link
+                href="/register"
+                className="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold rounded-full shadow-md transition-all"
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
         </div>
       </div>
       {/*  Mobile & Tablet Responsive Dropdown Menu */}
@@ -98,13 +152,31 @@ export default function AppNavbar() {
               </Link>
             ))}
 
-            <Link
-              href="/login"
-              onClick={() => setIsOpen(false)}
-              className="sm:hidden p-2 rounded-lg text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-900 hover:text-blue-600 transition-all border-t border-neutral-100 dark:border-neutral-900 pt-3"
-            >
-              Login
-            </Link>
+            {!isSessionLoading &&
+              (session ? (
+                <div className="border-t border-neutral-100 dark:border-neutral-900 pt-3 flex flex-col gap-2">
+                  <div className="px-2 text-xs text-neutral-500">
+                    Logged in as:{" "}
+                    <span className="font-bold">{session.user?.name}</span>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    disabled={logoutLoading}
+                    className="w-full text-left p-2 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 flex items-center gap-2 font-semibold transition-all cursor-pointer"
+                  >
+                    <LogOut size={16} />
+                    {logoutLoading ? "Logging out..." : "Log Out"}
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={() => setIsOpen(false)}
+                  className="sm:hidden p-2 rounded-lg text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-900 hover:text-blue-600 transition-all border-t border-neutral-100 dark:border-neutral-900 pt-3"
+                >
+                  Login
+                </Link>
+              ))}
           </div>
         </div>
       )}
