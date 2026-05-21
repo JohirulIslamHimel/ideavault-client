@@ -25,7 +25,11 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}
       >
-        <NextThemesProvider attribute="class" defaultTheme="dark">
+        <NextThemesProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={false}
+        >
           {children}
         </NextThemesProvider>
       </body>

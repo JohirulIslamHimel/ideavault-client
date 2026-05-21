@@ -39,8 +39,8 @@ export default function AppNavbar() {
     }
   };
 
-  useEffect(() => setMounted(true), []);
-  if (!mounted) return null;
+  // useEffect(() => setMounted(true), []);
+  // if (!mounted) return null;
 
   const navLinks = [
     { name: "Home", href: "/" },
