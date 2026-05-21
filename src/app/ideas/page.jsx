@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default async function AllIdeasPage() {
   let ideas = [];
   let isError = false;
@@ -64,6 +66,12 @@ export default async function AllIdeasPage() {
                 {idea.createdAt
                   ? new Date(idea.createdAt).toLocaleDateString()
                   : "N/A"}
+                <Link
+                  href={`/ideas/${idea._id}`}
+                  className="text-xs font-semibold text-blue-400 hover:text-blue-300 transition-colors"
+                >
+                  View Details &rarr;
+                </Link>
               </div>
             </div>
           ))}
