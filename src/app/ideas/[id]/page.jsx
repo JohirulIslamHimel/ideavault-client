@@ -1,4 +1,5 @@
 import Link from "next/link";
+import EditButton from "@/components/EditButton";
 
 export default async function IdeaDetailsPage({ params }) {
   const { id } = await params;
@@ -31,7 +32,7 @@ export default async function IdeaDetailsPage({ params }) {
   return (
     <div className="flex min-h-[70vh] items-center justify-center p-4">
       <div className="w-full max-w-2xl rounded-xl border border-neutral-800 bg-neutral-900/30 p-8 backdrop-blur-md shadow-2xl">
-        <div className="border-b border-neutral-800 pb-4 mb-6">
+        <div className="border-b border-neutral-800 pb-4 mb-6 flex justify-between items-start">
           <span className="inline-flex items-center rounded-md bg-blue-500/10 px-2.5 py-1 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20">
             {idea.category || "General"}
           </span>
@@ -42,6 +43,7 @@ export default async function IdeaDetailsPage({ params }) {
             Submitted on:{" "}
             {idea.createdAt ? new Date(idea.createdAt).toLocaleString() : "N/A"}
           </p>
+          <EditButton idea={idea} />
         </div>
 
         <div className="space-y-4 text-neutral-300">

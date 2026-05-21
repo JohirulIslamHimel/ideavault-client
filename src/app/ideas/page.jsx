@@ -1,3 +1,4 @@
+import DeleteButton from "@/components/DeleteButton";
 import Link from "next/link";
 
 export default async function AllIdeasPage() {
@@ -61,17 +62,23 @@ export default async function AllIdeasPage() {
                 </p>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-neutral-800/60 text-xs text-neutral-500">
-                Submitted on:{" "}
-                {idea.createdAt
-                  ? new Date(idea.createdAt).toLocaleDateString()
-                  : "N/A"}
-                <Link
-                  href={`/ideas/${idea._id}`}
-                  className="text-xs font-semibold text-blue-400 hover:text-blue-300 transition-colors"
-                >
-                  View Details &rarr;
-                </Link>
+              <div className="mt-6 pt-4 border-t border-neutral-800/60 text-xs text-neutral-500 flex items-center justify-between">
+                <div>
+                  Submitted on:{" "}
+                  {idea.createdAt
+                    ? new Date(idea.createdAt).toLocaleDateString()
+                    : "N/A"}
+                </div>
+                <div className="flex items-center gap-4">
+                  <DeleteButton id={idea._id} />
+
+                  <Link
+                    href={`/ideas/${idea._id}`}
+                    className="text-xs font-semibold text-blue-400 hover:text-blue-300 transition-colors"
+                  >
+                    View Details &rarr;
+                  </Link>
+                </div>
               </div>
             </div>
           ))}

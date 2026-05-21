@@ -6,7 +6,7 @@ import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { Avatar, Spinner } from "@heroui/react";
 import { useRouter } from "next/navigation";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { LogOut } from "lucide-react";
 
 export default function AppNavbar() {
@@ -18,6 +18,10 @@ export default function AppNavbar() {
   const [logoutLoading, setLogoutLoading] = useState(false);
   const { data: session, isPending: isSessionLoading } =
     authClient.useSession();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleLogout = async () => {
     setLogoutLoading(true);
@@ -39,9 +43,6 @@ export default function AppNavbar() {
     }
   };
 
-  // useEffect(() => setMounted(true), []);
-  // if (!mounted) return null;
-
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "Ideas", href: "/ideas" },
@@ -54,7 +55,7 @@ export default function AppNavbar() {
     <nav className="sticky top-0 z-50 border-b border-neutral-200 dark:border-neutral-800 bg-white/70 dark:bg-black/70 backdrop-blur-md transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          {/* Hamburger Button (Only Visible on Mobile/Tablet) */}
+          {/* Hamburger Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden p-2 rounded-lg text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-colors"
@@ -86,15 +87,19 @@ export default function AppNavbar() {
 
         {/* Right Side Controls */}
         <div className="flex items-center gap-4">
-          {/* Dark/Light Theme Toggle */}
+          {/* Dark/Light Theme Toggle*/}
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-colors"
+            className="p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-colors h-9 w-9 flex items-center justify-center"
           >
-            {theme === "dark" ? (
-              <Sun size={20} className="text-amber-500" />
+            {mounted ? (
+              theme === "dark" ? (
+                <Sun size={20} className="text-amber-500" />
+              ) : (
+                <Moon size={20} className="text-blue-600" />
+              )
             ) : (
-              <Moon size={20} className="text-blue-600" />
+              <div className="h-5 w-5" />
             )}
           </button>
 
@@ -137,7 +142,8 @@ export default function AppNavbar() {
           )}
         </div>
       </div>
-      {/*  Mobile & Tablet Responsive Dropdown Menu */}
+
+      {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-black transition-all duration-300">
           <div className="px-4 pt-2 pb-4 space-y-2 flex flex-col font-medium text-sm">
@@ -172,7 +178,7 @@ export default function AppNavbar() {
                 <Link
                   href="/login"
                   onClick={() => setIsOpen(false)}
-                  className="sm:hidden p-2 rounded-lg text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-900 hover:text-blue-600 transition-all border-t border-neutral-100 dark:border-neutral-900 pt-3"
+                  className="p-2 rounded-lg text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-900 hover:text-blue-600 transition-all border-t border-neutral-100 dark:border-neutral-900 pt-3"
                 >
                   Login
                 </Link>

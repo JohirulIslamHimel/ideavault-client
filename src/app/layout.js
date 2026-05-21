@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import "./globals.css";
+import AppNavbar from "@/components/Navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +31,8 @@ export default function RootLayout({ children }) {
           defaultTheme="dark"
           enableSystem={false}
         >
-          {children}
+          <AppNavbar></AppNavbar>
+          <main className="min-h-[calc(100vh-64px)] w-full">{children}</main>
         </NextThemesProvider>
       </body>
     </html>
